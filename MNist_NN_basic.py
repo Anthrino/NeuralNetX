@@ -29,7 +29,8 @@ with tf.Session() as sessn:
 	sessn.run(init)
 
 	# Training Stage
-	for epoch in range(1000):
+	for epoch in range(10000):
+		
 		epoch_loss = 0
 
 		batch_X, batch_Y = mnist.train.next_batch(100)
@@ -40,8 +41,8 @@ with tf.Session() as sessn:
 
 		epoch_loss += c
 
-		print('Finished Epoch', epoch, '> loss : ', epoch_loss)
+		# print('Finished Epoch', epoch, '> loss : ', epoch_loss)
 
 	test_data = {X: mnist.test.images, Y_: mnist.test.labels}
-	a, c = sessn.run([accuracy, cross_entropy], feed_dict=train_dict)
-	print('Accuracy : ', accuracy.eval({X: mnist.test.images, Y_: mnist.test.labels}))
+	a, c = sessn.run([accuracy, cross_entropy], feed_dict=test_data)
+	print('Accuracy : ', a)
