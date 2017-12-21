@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ec6d5db4-b5e9-4196-8b33-a4cef6387b90" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNist_NN_basic.py" afterPath="$PROJECT_DIR$/MNist_NN_basic.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/MNist_NN_basic.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tf_mnist_NN.py" afterPath="$PROJECT_DIR$/tf_mnist_NN.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,10 +21,10 @@
       <file leaf-file-name="tf_mnist_NN.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tf_mnist_NN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="61" column="21" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
+            <state relative-caret-position="885">
+              <caret line="59" column="35" lean-forward="true" selection-start-line="59" selection-start-column="35" selection-end-line="59" selection-end-column="35" />
               <folding>
-                <element signature="e#0#23#0" expanded="true" />
+                <element signature="e#69#92#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -284,18 +284,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-178">
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#23#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tf_mnist_NN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="61" column="21" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
+        <state relative-caret-position="885">
+          <caret line="59" column="35" lean-forward="true" selection-start-line="59" selection-start-column="35" selection-end-line="59" selection-end-column="35" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#69#92#0" expanded="true" />
           </folding>
         </state>
       </provider>
