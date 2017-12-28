@@ -8,10 +8,15 @@
 
 	C1 -> C2 (expansion of coarse classes into subclasses) -> // Fine Classifier (Probability/Density of each subclass) // C3 (Final subclass labels)
 
+	Features : 		POS-Tag
+					Chunks
+					Head_Chunk: combination of first NP+VP after question word	
+
  '''
 
 
 import tensorflow as tf
+import trec_input_feed as tif
 # ** todo: find method to input TREC dataset for training and testing
 
 # todo: define no of hidden layers for both classifier NNs
@@ -20,8 +25,8 @@ hid2_node_cnt = 200
 hid3_node_cnt = 100
 
 # todo: find no.of layers at each level
-coarse_classes = 10
-fine_classes = 10
+coarse_classes = 6
+fine_classes = 50
 batch_size = 100
 
 #todo: Define input and output vector sizes (features)
