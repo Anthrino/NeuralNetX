@@ -30,17 +30,16 @@ fine_classes = 50
 batch_size = 100
 
 #todo: Define input and output vector sizes (features)
-X = tf.placeholder(tf.float32, [None, 784])  # 28*28 pixels flattened
+X = tf.placeholder(tf.float32, [None, ])  
 YC_ = tf.placeholder(tf.float32, [None, 10])
 YF_ = tf.placeholder(tf.float32, [None, 10])
-
 
 # ** todo: Modify both NN definitons change dimension of each hidden layer
 	
 # NN definiton for Top level classifier
 def coarse_classf_NN_model(data):
 
-	hid1 = {'weights': tf.Variable(tf.truncated_normal([784, hid1_node_cnt], stddev=0.1)),
+	hid1 = {'weights': tf.Variable(tf.truncated_normal([, hid1_node_cnt], stddev=0.1)),
 	        'biases': tf.Variable(tf.random_normal([hid1_node_cnt]))}
 
 	hid2 = {'weights': tf.Variable(tf.truncated_normal([hid1_node_cnt, hid2_node_cnt], stddev=0.1)),
