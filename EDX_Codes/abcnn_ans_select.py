@@ -1,42 +1,48 @@
 '''
 Attention-Based Bi CNN for Answer Sentence Selection from context.
 
-
 '''
 
 import tensorflow as tf
 import numpy as np
 import csv
+import glove_utils as glove
 from Helpers import utils
+from nltk.tokenize.moses import MosesTokenizer
 
-# IMPORT DATASET
+tokenizer = MosesTokenizer()
+glove_wordmap = glove.get_glove()
 
-# Hyperparameters
 
-opch_L1 = 4
-opch_L2 = 8
-opch_L3 = 12
-opch_L4 = 200
-classes = 10
-batch_size = 100
+def sentence2sequence(sentence):
+	tokens = tokenizer.tokenize(sentence.lower())
+	rows = []
+	words = []
 
-sequence_length =
-no_classes
-vocab_size,
-embedding_size, filter_sizes, num_filters
-
-Q = tf.placeholder(tf.float32, [None, 28, 28, 1])
-A = tf.placeholder(tf.float32, [None, 28, 28, 1])
-
-Y_ = tf.placeholder(tf.float32, [None, 10])
+	for token in tokens:
+		i = len(token)
+		while len(token) > 0:
+			word = token[:i]
+			if word in glove_wordmap:
+				rows.append(glove_wordmap[word])
+				words.append(word)
+				token = token[i:]
+				i = len(token)
+				continue
+			else:
+				i -= 1
+			if i == 0:
+				rows.append(glove.fill_unknown(token))
+				words.append(token)
+				break
+	return np.array(rows), words
 
 
 def _process_input(self, file):
-
 	questions = []
 	answers = []
 	file = ".\Dataset\WikiQACorpus\WikiQA-dev.tsv"
-		
+
 	with open(file, encoding="utf8") as data_file:
 		source = list(csv.reader(data_file, delimiter="\t", quotechar='"'))
 		q_index = 'Q-1'
@@ -59,80 +65,58 @@ def _process_input(self, file):
 		print("Question:", questions[i])
 		print("Answers:", answers[i])
 
-	inp_vector = [utils.process_word(word=w,
-	                                 word2vec=self.word2vec,
-	                                 vocab=self.vocab,
-	                                 ivocab=self.ivocab,
-	                                 word_vector_size=self.word_vector_size,
-	                                 to_return="word2vec") for w in inp]
-
-		# print(inp)
-		# print([np.array(wvec).shape for wvec in inp_vector])
-		# print(np.array(inp_vector).shape)
-
-		q_vector = [utils.process_word(word=w,
-		                               word2vec=self.word2vec,
-		                               vocab=self.vocab,
-		                               ivocab=self.ivocab,
-		                               word_vector_size=self.word_vector_size,
-		                               to_return="word2vec") for w in q]
-		inputs.append(np.vstack(inp_vector).astype(floatX))
-		questions.append(np.vstack(q_vector).astype(floatX))
-		if self.mode != 'deploy':
-			answers.append(utils.process_word(word=x["A"],
-			                                  word2vec=self.word2vec,
-			                                  vocab=self.vocab,
-			                                  ivocab=self.ivocab,
-			                                  word_vector_size=self.word_vector_size,
-			                                  to_return=self.answer_vec))
-		# NOTE: here we assume the answer is one word!
-		if self.input_mask_mode == 'word':
-			input_masks.append(np.array([index for index, w in enumerate(inp)], dtype=np.int32))
-		elif self.input_mask_mode == 'sentence':
-			input_masks.append(
-				np.array([index for index, w in enumerate(inp) if w == '.'], dtype=np.int32))
-		else:
-			raise Exception("invalid input_mask_mode")
-
-	return inputs, questions, answers, input_masks
+	return questions, answers
 
 
-def neural_net_model(data):
-	L1 = {'weights': tf.Variable(tf.truncated_normal([5, 5, 1, opch_L1], stddev=0.1)),
-	      'biases': tf.Variable(tf.ones([opch_L1]) / 10)}
+# Hyperparameters
 
-	L2 = {'weights': tf.Variable(tf.truncated_normal([5, 5, opch_L1, opch_L2], stddev=0.1)),
-	      'biases': tf.Variable(tf.ones([opch_L2]) / 10)}
+sequence_length 
+no_classes
+vocab_size,
+embedding_size
+vector_dim = 50
+filter_size = 
+num_filters = 
 
-	L3 = {'weights': tf.Variable(tf.truncated_normal([4, 4, opch_L2, opch_L3], stddev=0.1)),
-	      'biases': tf.Variable(tf.ones([opch_L3]) / 10)}
+# Q = tf.placeholder(tf.float32, [None, sequence_length, 50])
+# A = tf.placeholder(tf.float32, [None, )
 
-	L4 = {'weights': tf.Variable(tf.truncated_normal([7 * 7 * opch_L3, opch_L4], stddev=0.1)),
-	      'biases': tf.Variable(tf.ones([opch_L4]) / 10)}
+# Y_ = tf.placeholder(tf.float32, [None, 10])
 
-	output = {'weights': tf.Variable(tf.truncated_normal([opch_L4, classes], stddev=0.1)),
-	          'biases': tf.Variable(tf.zeros([classes]) / 10)}
 
-	# Rectified linear activation fn and softmax
-	layer1 = tf.nn.relu(
-		tf.add(tf.nn.conv2d(data, L1['weights'], strides=[1, 1, 1, 1], padding='SAME'), L1['biases']))
+def abcnn_model(input_data):
+	q_set = input_data["Q"]
+	a_set = input_data["A"]
 
-	layer2 = tf.nn.relu(
-		tf.add(tf.nn.conv2d(layer1, L2['weights'], strides=[1, 2, 2, 1], padding='SAME'), L2['biases']))
+	for i in range(len(q_set)):
+		q_vector, _ = sentence2sequence(q_set[i])
 
-	layer3 = tf.nn.relu(
-		tf.add(tf.nn.conv2d(layer2, L3['weights'], strides=[1, 2, 2, 1], padding='SAME'), L3['biases']))
+		for a in a_set[i]:
+			a_vector, _ = sentence2sequence(a)
 
-	layer4 = tf.nn.relu(
-		tf.add(tf.matmul(tf.reshape(layer3, shape=[-1, 7 * 7 * opch_L3]), L4['weights']), L4['biases']))
+		# Convolutional Layer
+		q_conv = tf.layers.conv2d(
+			inputs=q_vector,
+			filters=num_filters,
+			kernel_size=[filter_size, vector_dim],
+			padding="same",
+			activation=tf.nn.relu)
 
-	output_layer = tf.nn.softmax(tf.add(tf.matmul(layer4, output['weights']), output['biases']))
+		a_conv = tf.layers.conv2d(
+ 			inputs=a_vector,
+			filters=num_filters,
+			kernel_size=[filter_size, vector_dim],
+			padding="same",
+			activation=tf.nn.relu)
+		
+	  	pool = tf.layers.average_pooling2d(inputs=conv1, pool_size=[2, 2], strides=2)
+	  	pool1 = tf.layers.average_pooling2d(inputs=conv1, pool_size=[2, 2], strides=2)
 
-	return output_layer
+
 
 
 def train_neural_net(X):
-	Y = neural_net_model(X)
+	Y = abcnn_model(X)
 
 	cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=Y, labels=Y_)  # loss function
 	cross_entropy = tf.reduce_mean(cross_entropy) * 100
@@ -166,7 +150,7 @@ def train_neural_net(X):
 
 			print('Finished Epoch', epoch, '> loss : ', epoch_loss)
 
-*
+
 test_data = {X: np.reshape(mnist.test.images, (-1, 28, 28, 1)), Y_: mnist.test.labels}
 a, c = sessn.run([accuracy, cross_entropy], feed_dict=test_data)
 print('Test Accuracy : ', a)
